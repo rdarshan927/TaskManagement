@@ -1,0 +1,32 @@
+// Global setup for all tests
+const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+
+let mongo;
+
+beforeAll(async () => {
+  // Start in-memory MongoDB server
+  mongo = await MongoMemoryServer.create();
+  const uri = mongo.getUri();
+  
+  // Set a fixed JWT secret for testing
+  process.env.JWT_SECRET = 'test-jwt-secret';
+  
+  await mongoose.connect(uri);
+  console.log('Connected to in-memory database');
+});
+
+afterAll(async () => {
+  await mongoose.connection.close();
+  await mongo.stop();
+  console.log('Disconnected from in-memory database');
+});
+
+// Clear all collections before each test
+beforeEach(async () => {
+  const collections = mongoose.connection.collections;
+  for (const key in collections) {
+    await collections[key].deleteMany({});
+  }
+  console.log('Database cleared');
+});
