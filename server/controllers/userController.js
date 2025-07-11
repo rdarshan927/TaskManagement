@@ -144,9 +144,14 @@ const loginUser = async (req, res) => {
 // @access  Private
 const getMe = async (req, res) => {
   try {
+    // Debugging
+    console.log('User from req:', req.user);
+    
+    // Make sure to return the user data in the response
     res.status(200).json(req.user);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error in getMe:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

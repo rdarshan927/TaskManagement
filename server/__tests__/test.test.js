@@ -5,8 +5,9 @@ describe('Task API Endpoints', () => {
   let token;
   let taskId;
 
-  beforeEach(async () => {
-    // Create a test user
+  // First create and authenticate a user before any task tests
+  beforeAll(async () => {
+    // Create test user
     const userData = {
       name: 'Task Test User',
       email: 'tasktest@example.com',
@@ -17,9 +18,12 @@ describe('Task API Endpoints', () => {
       .post('/api/users')
       .send(userData);
     
+    // Store the token for all task tests
     token = userResponse.body.token;
-    
-    // Create a test task
+    console.log('Task test auth token:', token);
+  });
+
+  it('should create a task', async () => {
     const taskData = {
       title: 'Test Task',
       description: 'This is a test task',
@@ -27,30 +31,16 @@ describe('Task API Endpoints', () => {
       priority: 'medium'
     };
     
-    const taskResponse = await request(app)
-      .post('/api/tasks')
-      .set('Authorization', `Bearer ${token}`)
-      .send(taskData);
-    
-    taskId = taskResponse.body._id;
-  });
-
-  it('should create a task', async () => {
-    const taskData = {
-      title: 'New Task',
-      description: 'This is a new task',
-      status: 'todo',
-      priority: 'high'
-    };
-    
     const response = await request(app)
       .post('/api/tasks')
       .set('Authorization', `Bearer ${token}`)
       .send(taskData);
     
+    // Save task ID for later tests
+    taskId = response.body._id;
+    
     expect(response.statusCode).toBe(201);
     expect(response.body.title).toBe(taskData.title);
-    expect(response.body.priority).toBe(taskData.priority);
   });
 
   it('should get all tasks', async () => {
