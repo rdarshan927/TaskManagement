@@ -9,14 +9,13 @@ const MONGO_URI = process.env.MONGO_URI;
 const connectToDatabase = async () => {
   try {
     await mongoose.connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 15000, // Increased from default 30s
       socketTimeoutMS: 45000,
       // These options help with Vercel's serverless environment
       connectTimeoutMS: 30000,
-      keepAlive: true,
-      keepAliveInitialDelay: 300000
+      // Remove the deprecated options:
+      // keepAlive: true,
+      // keepAliveInitialDelay: 300000
     });
     console.log('Connected to MongoDB');
     return mongoose.connection;
