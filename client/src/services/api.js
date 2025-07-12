@@ -22,4 +22,34 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Add response interceptor for better error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      // The request was made and the server responded with an error status
+      console.error('Response error:', {
+        data: error.response.data,
+        status: error.response.status,
+        headers: error.response.headers
+      });
+      
+      // You could add specific handling based on status codes
+      if (error.response.status === 401) {
+        // Handle unauthorized (e.g., redirect to login)
+        localStorage.removeItem('token');
+        // window.location.href = '/login'; // Uncomment if you want auto-redirect
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error('Request error - no response:', error.request);
+    } else {
+      // Something happened in setting up the request
+      console.error('Request setup error:', error.message);
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
 export default api;
