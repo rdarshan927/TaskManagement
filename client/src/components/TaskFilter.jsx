@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, memo } from 'react';
 import { TaskContext } from '../context/taskContextUtils';
 
 const TaskFilter = () => {
@@ -64,4 +64,4 @@ const TaskFilter = () => {
   );
 };
 
-export default TaskFilter;
+export default memo(TaskFilter);

@@ -3,14 +3,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthContext } from '../../context/authUtils';
 import Login from '../../pages/Login';
 
-// Remove server import for now to simplify testing
-// import { server } from '../mocks/server';
-
-// Comment out MSW server for now
-// beforeAll(() => server.listen());
-// afterEach(() => server.resetHandlers());
-// afterAll(() => server.close());
-
 const mockLogin = jest.fn();
 const mockNavigate = jest.fn();
 

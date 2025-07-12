@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Node.js API Service
   server:
     build:
       context: ./server
@@ -16,7 +15,7 @@ services:
       - NODE_ENV=production
     networks:
       - app-network
-    # Modified healthcheck that works with Node.js Alpine
+    # Healthcheck
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"]
       interval: 30s

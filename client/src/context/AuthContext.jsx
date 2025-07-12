@@ -44,8 +44,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (userData) => {
     try {
-      // If token is included in userData, no need to set it again
-      // Otherwise, you might need to handle that separately
       setUser(userData);
       return userData;
     } catch (err) {

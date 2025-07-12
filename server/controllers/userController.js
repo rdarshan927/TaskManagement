@@ -47,8 +47,8 @@ const enableTwoFactor = async (req, res) => {
     secret: req.user.twoFactorSecret,
     encoding: 'base32',
     token,
-    digits: 6,  // Add this
-    period: 30  // Add this
+    digits: 6,  
+    period: 30  
   });
   
   if (verified) {
@@ -63,9 +63,6 @@ const enableTwoFactor = async (req, res) => {
   }
 };
 
-// @desc    Register new user
-// @route   POST /api/users
-// @access  Public
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -106,9 +103,6 @@ const registerUser = async (req, res) => {
   }
 };
 
-// @desc    Authenticate a user
-// @route   POST /api/users/login
-// @access  Public
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -139,15 +133,10 @@ const loginUser = async (req, res) => {
   }
 };
 
-// @desc    Get user data
-// @route   GET /api/users/me
-// @access  Private
 const getMe = async (req, res) => {
   try {
-    // Debugging
     console.log('User from req:', req.user);
     
-    // Make sure to return the user data in the response
     res.status(200).json(req.user);
   } catch (error) {
     console.error('Error in getMe:', error);
@@ -155,9 +144,6 @@ const getMe = async (req, res) => {
   }
 };
 
-// @desc    Verify 2FA token
-// @route   POST /api/users/verify-2fa
-// @access  Public
 const verifyTwoFactor = async (req, res) => {
   try {
     const { userId, token } = req.body;
@@ -190,14 +176,13 @@ const verifyTwoFactor = async (req, res) => {
           encoding: 'base32'
         });
 
-        // Debug with more information
-        console.log('TOTP Verification Debug:', {
-          providedToken: cleanToken,
-          expectedToken: expectedToken,
-          secret: user.twoFactorSecret.substring(0, 5) + '...',
-          currentTime: Math.floor(Date.now() / 1000),
-          timeStep: 30
-        });
+        // console.log('TOTP Verification Debug:', {
+        //   providedToken: cleanToken,
+        //   expectedToken: expectedToken,
+        //   secret: user.twoFactorSecret.substring(0, 5) + '...',
+        //   currentTime: Math.floor(Date.now() / 1000),
+        //   timeStep: 30
+        // });
 
         // Try both verification methods
         verified = speakeasy.totp.verify({
@@ -205,8 +190,8 @@ const verifyTwoFactor = async (req, res) => {
           encoding: 'base32',
           token: cleanToken,
           window: 6,
-          digits: 6,  // Add this
-          period: 30  // Add this
+          digits: 6,  
+          period: 30  
         });
 
         // If standard verification fails, try manual token generation and comparison
@@ -249,18 +234,8 @@ const verifyTwoFactor = async (req, res) => {
   }
 };
 
-// @desc    Disable 2FA
-// @route   POST /api/users/2fa/disable
-// @access  Private
 const disableTwoFactor = async (req, res) => {
-  try {
-    // For security, optionally require password confirmation
-    // const { password } = req.body;
-    // const passwordMatch = await bcrypt.compare(password, req.user.password);
-    // if (!passwordMatch) {
-    //   return res.status(401).json({ message: 'Invalid password' });
-    // }
-    
+  try {    
     // Disable 2FA
     req.user.twoFactorEnabled = false;
     req.user.twoFactorSecret = undefined;

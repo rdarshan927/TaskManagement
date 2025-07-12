@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-// We'll implement these controllers soon
 const { getTasks, createTask, updateTask, deleteTask } = require('../controllers/taskController');
 const { protect } = require('../middleware/authMiddleware');
 

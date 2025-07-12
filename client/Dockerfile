@@ -1,6 +1,6 @@
 FROM node:19-alpine as build
 
-# Set working directory
+# Working directory
 WORKDIR /app
 
 # Copy package files and install dependencies
@@ -19,7 +19,7 @@ FROM nginx:stable-alpine
 # Copy built assets from the build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Add nginx configuration
+# Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port

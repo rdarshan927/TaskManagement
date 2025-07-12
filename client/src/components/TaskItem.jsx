@@ -1,17 +1,6 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, memo } from 'react';
 import { TaskContext } from '../context/taskContextUtils';
-
-const priorityColors = {
-  low: 'bg-green-100 text-green-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  high: 'bg-red-100 text-red-800'
-};
-
-const statusColors = {
-  'todo': 'bg-gray-100 text-gray-800',
-  'in-progress': 'bg-blue-100 text-blue-800',
-  'completed': 'bg-purple-100 text-purple-800'
-};
+import { priorityStyles, statusStyles, buttonVariants, inputFocusStyles } from '../utils/theme';
 
 const TaskItem = ({ task }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -54,40 +43,40 @@ const TaskItem = ({ task }) => {
   if (isEditing) {
     return (
       <div className="bg-white p-4 rounded-lg shadow-md">
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div>
-            <label htmlFor="title-input" className="block text-sm font-medium text-gray-700">Title</label>
+            <label htmlFor="title-input" className="block text-sm font-medium text-dark-DEFAULT">Title</label>
             <input
               id="title-input"
               type="text"
               name="title"
               value={editData.title}
               onChange={handleChange}
-              className="w-full mt-1 px-3 py-2 border rounded-md"
+              className={`w-full mt-1 px-3 py-2 border rounded-md ${inputFocusStyles}`}
               required
             />
           </div>
           
           <div>
-            <label htmlFor="description-input" className="block text-sm font-medium text-gray-700">Description</label>
+            <label htmlFor="description-input" className="block text-sm font-medium text-dark-DEFAULT">Description</label>
             <textarea
               id="description-input"
               name="description"
               value={editData.description}
               onChange={handleChange}
-              className="w-full mt-1 px-3 py-2 border rounded-md"
+              className={`w-full mt-1 px-3 py-2 border rounded-md ${inputFocusStyles}`}
               rows="2"
             />
           </div>
           
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Status</label>
+              <label className="block text-sm font-medium text-dark-DEFAULT">Status</label>
               <select
                 name="status"
                 value={editData.status}
                 onChange={handleChange}
-                className="w-full mt-1 px-3 py-2 border rounded-md"
+                className={`w-full mt-1 px-3 py-2 border rounded-md ${inputFocusStyles}`}
               >
                 <option value="todo">To Do</option>
                 <option value="in-progress">In Progress</option>
@@ -96,12 +85,12 @@ const TaskItem = ({ task }) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700">Priority</label>
+              <label className="block text-sm font-medium text-dark-DEFAULT">Priority</label>
               <select
                 name="priority"
                 value={editData.priority}
                 onChange={handleChange}
-                className="w-full mt-1 px-3 py-2 border rounded-md"
+                className={`w-full mt-1 px-3 py-2 border rounded-md ${inputFocusStyles}`}
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -111,26 +100,26 @@ const TaskItem = ({ task }) => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700">Due Date</label>
+            <label className="block text-sm font-medium text-dark-DEFAULT">Due Date</label>
             <input
               type="date"
               name="dueDate"
               value={editData.dueDate}
               onChange={handleChange}
-              className="w-full mt-1 px-3 py-2 border rounded-md"
+              className={`w-full mt-1 px-3 py-2 border rounded-md ${inputFocusStyles}`}
             />
           </div>
           
           <div className="flex justify-end space-x-2 pt-2">
             <button 
               onClick={() => setIsEditing(false)} 
-              className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300"
+              className={`px-3 py-1 ${buttonVariants.neutral}`}
             >
               Cancel
             </button>
             <button 
               onClick={handleUpdate} 
-              className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className={`px-3 py-1 ${buttonVariants.primary}`}
             >
               Save
             </button>
@@ -143,12 +132,13 @@ const TaskItem = ({ task }) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
       <div className="flex justify-between items-start mb-2">
-        <h3 className="text-lg font-semibold text-gray-800">{task.title}</h3>
+        <h3 className="text-lg font-semibold text-dark-dark">{task.title}</h3>
         <div className="flex space-x-1">
           <button 
             onClick={() => setIsEditing(true)} 
             data-testid="edit-button"
-            className="text-gray-500 hover:text-blue-600"
+            className="text-dark-light hover:text-primary-DEFAULT"
+            aria-label="Edit task"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -156,7 +146,7 @@ const TaskItem = ({ task }) => {
           </button>
           <button 
             onClick={handleDelete} 
-            className="text-gray-500 hover:text-red-600"
+            className="text-dark-light hover:text-status-error"
             data-testid="delete-button"
             aria-label="Delete task"
           >
@@ -168,20 +158,20 @@ const TaskItem = ({ task }) => {
       </div>
       
       {task.description && (
-        <p className="text-gray-600 mb-3">{task.description}</p>
+        <p className="text-dark-light mb-3">{task.description}</p>
       )}
       
       <div className="flex flex-wrap gap-2 mb-3">
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[task.status]}`}>
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusStyles[task.status]}`}>
           {task.status === 'todo' ? 'To Do' : task.status === 'in-progress' ? 'In Progress' : 'Completed'}
         </span>
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${priorityColors[task.priority]}`}>
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${priorityStyles[task.priority]}`}>
           {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
         </span>
       </div>
       
       {task.dueDate && (
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-dark-light">
           Due: {formatDate(task.dueDate)}
         </div>
       )}
@@ -189,4 +179,8 @@ const TaskItem = ({ task }) => {
   );
 };
 
-export default TaskItem;
+// Export a memoized version of the component
+export default memo(TaskItem, (prevProps, nextProps) => {
+  // Only re-render if the task actually changed
+  return JSON.stringify(prevProps.task) === JSON.stringify(nextProps.task);
+});

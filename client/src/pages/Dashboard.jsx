@@ -1,19 +1,17 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, lazy, Suspense } from 'react';
 import { useAuth } from '../context/authUtils';
 import { TaskProvider } from '../context/TaskContext';
-import TaskList from '../components/TaskList';
-import TaskForm from '../components/TaskForm';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 import TaskFilter from '../components/TaskFilter';
 
-const Dashboard = () => {
-  const { user, logout } = useAuth();
-  const [isAddingTask, setIsAddingTask] = useState(false);
-  const navigate = useNavigate();
+// Lazy load components
+const TaskList = lazy(() => import('../components/TaskList'));
+const TaskForm = lazy(() => import('../components/TaskForm'));
 
-  const goToProfile = () => {
-    navigate('/profile');
-  };
+const Dashboard = () => {
+  const { user } = useAuth();
+  const [isAddingTask, setIsAddingTask] = useState(false);
+
 
   return (
     <TaskProvider>
@@ -31,25 +29,15 @@ const Dashboard = () => {
             >
               {isAddingTask ? 'Cancel' : 'Add Task'}
             </button>
-            <button
-              onClick={goToProfile}
-              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-            >
-              Profile
-            </button>
-            <button 
-              onClick={logout} 
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-            >
-              Logout
-            </button>
           </div>
         </div>
         
         {/* Task Form */}
         {isAddingTask && (
           <div className="mb-8 p-4 bg-white rounded-lg shadow-md">
-            <TaskForm onComplete={() => setIsAddingTask(false)} />
+            <Suspense fallback={<LoadingSpinner />}>
+              <TaskForm onComplete={() => setIsAddingTask(false)} />
+            </Suspense>
           </div>
         )}
         
@@ -57,7 +45,9 @@ const Dashboard = () => {
         <TaskFilter />
         
         {/* Task List */}
-        <TaskList />
+        <Suspense fallback={<LoadingSpinner />}>
+          <TaskList />
+        </Suspense>
       </div>
     </TaskProvider>
   );

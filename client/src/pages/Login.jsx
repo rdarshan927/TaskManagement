@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authUtils';
-import api from '../services/api'; // Adjust the import based on your project structure
+import api from '../services/api';
+import { buttonVariants, inputFocusStyles } from '../utils/theme';
+import AuthHeader from '../components/layout/AuthHeader';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -34,7 +36,7 @@ const Login = () => {
       } else {
         // Store token and update auth context
         localStorage.setItem('token', response.data.token);
-        await login(response.data); // Make sure you're calling the login function
+        await login(response.data);
         navigate('/');
       }
     } catch (err) {
@@ -52,7 +54,7 @@ const Login = () => {
       const response = await api.post('/users/verify-2fa', { 
         userId, 
         token,
-        isBackupCode: isUsingBackupCode // Fixed parameter name
+        isBackupCode: isUsingBackupCode
       });
       
       // Save token and update auth context
@@ -68,92 +70,95 @@ const Login = () => {
   };
   
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center text-gray-800">Login</h1>
+    <div className="flex min-h-screen items-center justify-center bg-neutral-light p-4">
+      <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow-md">
+        {/* AuthHeader */}
+        <AuthHeader />
         
-        {error && <div className="p-3 text-sm text-red-500 bg-red-100 rounded-md">{error}</div>}
+        <h1 className="text-2xl font-bold text-center text-dark-dark">Login</h1>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
+        {error && <div className="p-3 bg-status-error/10 text-status-error rounded-md">{error}</div>}
         
-        {requiresTwoFactor && (
+        {!requiresTwoFactor ? (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-dark-DEFAULT">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 mt-1 border rounded-md ${inputFocusStyles}`}
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-dark-DEFAULT">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 mt-1 border rounded-md ${inputFocusStyles}`}
+              />
+            </div>
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full px-4 py-2 ${buttonVariants.primary} disabled:opacity-50`}
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+        ) : (
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Two-Factor Authentication</h2>
+            <h2 className="text-xl font-semibold text-dark-dark">Two-Factor Authentication</h2>
             
             <div className="flex justify-between mb-2">
               <button 
                 onClick={() => setIsUsingBackupCode(false)}
-                className={`px-3 py-1 rounded ${!isUsingBackupCode ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
+                className={`px-3 py-1 rounded ${!isUsingBackupCode ? buttonVariants.primary : 'bg-neutral-light text-dark-DEFAULT'}`}
               >
                 Authenticator Code
               </button>
               <button 
                 onClick={() => setIsUsingBackupCode(true)}
-                className={`px-3 py-1 rounded ${isUsingBackupCode ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
+                className={`px-3 py-1 rounded ${isUsingBackupCode ? buttonVariants.primary : 'bg-neutral-light text-dark-DEFAULT'}`}
               >
                 Backup Code
               </button>
             </div>
             
             {isUsingBackupCode ? (
-              <p>Enter one of your backup codes:</p>
+              <p className="text-dark-light">Enter one of your backup codes:</p>
             ) : (
-              <p>Enter the code from your authenticator app:</p>
+              <p className="text-dark-light">Enter the code from your authenticator app:</p>
             )}
             
             <input
               type="text"
               value={token}
               onChange={(e) => setToken(e.target.value)}
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 mt-1 border rounded-md ${inputFocusStyles}`}
               placeholder={isUsingBackupCode ? "Enter backup code" : "Enter 6-digit code"}
             />
             <button 
               onClick={verifyTwoFactor} 
-              className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-4 py-2 ${buttonVariants.primary}`}
             >
               Verify
             </button>
           </div>
         )}
         
-        <p className="text-center text-gray-600">
+        <p className="text-center text-dark-light">
           Don't have an account?{' '}
-          <Link to="/register" className="text-blue-600 hover:text-blue-800">
+          <Link to="/register" className="text-primary-DEFAULT hover:text-primary-dark">
             Register
           </Link>
         </p>

@@ -9,7 +9,6 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/task-manag
 mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB');
-    // Start server after successful DB connection
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = '/api';
 
-// Create axios instance with base URL
+// Axios instance with base URL
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -10,7 +10,7 @@ const api = axios.create({
   },
 });
 
-// Add request interceptor to add token to requests
+// Request interceptor to add token to requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');

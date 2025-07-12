@@ -1,8 +1,5 @@
 const Task = require('../models/taskModel');
 
-// @desc    Get user tasks
-// @route   GET /api/tasks
-// @access  Private
 const getTasks = async (req, res) => {
   try {
     const tasks = await Task.find({ user: req.user.id });
@@ -12,9 +9,6 @@ const getTasks = async (req, res) => {
   }
 };
 
-// @desc    Create new task
-// @route   POST /api/tasks
-// @access  Private
 const createTask = async (req, res) => {
   try {
     const { title, description, status, priority, dueDate } = req.body;
@@ -39,9 +33,6 @@ const createTask = async (req, res) => {
   }
 };
 
-// @desc    Update task
-// @route   PUT /api/tasks/:id
-// @access  Private
 const updateTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -67,9 +58,6 @@ const updateTask = async (req, res) => {
   }
 };
 
-// @desc    Delete task
-// @route   DELETE /api/tasks/:id
-// @access  Private
 const deleteTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
