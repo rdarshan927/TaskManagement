@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = '/api';
+const API_URL = 'https://task-management-kappa-taupe.vercel.app/api';
 
 // Axios instance with base URL
 const api = axios.create({
