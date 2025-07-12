@@ -3,35 +3,30 @@ const app = require('./app');
 const mongoose = require('mongoose');
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/task-manager';
+const MONGO_URI = process.env.MONGO_URI;
 
-// Create cached connection variable
-let cachedConnection = null;
-
-// Connect to MongoDB
+// Improve MongoDB connection options
 const connectToDatabase = async () => {
-  if (cachedConnection) {
-    return cachedConnection;
-  }
-  
   try {
-    const connection = await mongoose.connect(MONGO_URI, {
+    await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 15000, // Increased from default 30s
       socketTimeoutMS: 45000,
+      // These options help with Vercel's serverless environment
+      connectTimeoutMS: 30000,
+      keepAlive: true,
+      keepAliveInitialDelay: 300000
     });
-    
     console.log('Connected to MongoDB');
-    cachedConnection = connection;
-    return connection;
+    return mongoose.connection;
   } catch (err) {
     console.error('MongoDB connection error:', err);
     throw err;
   }
 };
 
-// For local development
+// Connect for local development
 if (process.env.NODE_ENV !== 'production') {
   connectToDatabase()
     .then(() => {
@@ -45,16 +40,21 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
-// Middleware to connect to database before handling requests
+// For serverless environment - connect to database before handling requests
 app.use(async (req, res, next) => {
+  // Skip reconnection if already connected
+  if (mongoose.connection.readyState === 1) {
+    return next();
+  }
+  
   try {
     await connectToDatabase();
     next();
   } catch (error) {
     console.error('Database connection error:', error);
-    return res.status(500).json({ message: 'Database connection failed' });
+    return res.status(500).json({ message: 'Database connection failed', error: error.message });
   }
 });
 
-// Export the Express app for Vercel
+// Export for serverless
 module.exports = app;
