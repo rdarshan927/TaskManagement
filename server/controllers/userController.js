@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
+const dbConnect = require('../utils/dbConnect');
 
 // Generate JWT
 const generateToken = (id) => {
