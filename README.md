@@ -299,3 +299,15 @@ project-root/
 - The frontend includes a global `ErrorBoundary` component for graceful error handling and user-friendly messages.
 
 ---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## Project Motive
+
+The Task Management Application was built to demonstrate best practices in full-stack web development, focusing on secure authentication, user experience, and scalable architecture. It serves as a foundation for learning, collaboration, and further enhancement in productivity tools.
+
+---
