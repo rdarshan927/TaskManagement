@@ -1,30 +1,35 @@
 const mongoose = require('mongoose');
 
-// Cache the database connection
-let cachedConnection = null;
+const MONGO_URI = process.env.MONGO_URI;
+
+if (!MONGO_URI) {
+  throw new Error('Please define the MONGO_URI environment variable');
+}
+
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
 async function dbConnect() {
-  // If the connection is cached, return the cached connection
-  if (cachedConnection && mongoose.connection.readyState === 1) {
-    console.log('Using cached database connection');
-    return cachedConnection;
-  }
+  if (cached.conn) return cached.conn;
 
-  // If not connected, create a new connection
-  try {
-    // Simplified options for newer MongoDB driver versions
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGO_URI, {
+      bufferCommands: false,
       serverSelectionTimeoutMS: 30000,
       socketTimeoutMS: 75000,
       connectTimeoutMS: 60000,
     });
-    
-    cachedConnection = conn;
-    console.log('MongoDB connected');
-    return conn;
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    throw error;
+  }
+
+  try {
+    cached.conn = await cached.promise;
+    return cached.conn;
+  } catch (err) {
+    cached.promise = null;
+    throw err;
   }
 }
 
