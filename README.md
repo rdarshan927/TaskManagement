@@ -102,8 +102,8 @@ A robust full-stack web application for organizing, managing, and tracking tasks
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/your-username/task-management-app.git
-   cd task-management-app
+   git clone https://github.com/rdarshan927/TaskManagement.git
+   cd TaskManagement
    ```
 
 2. Navigate to the server directory:
@@ -129,7 +129,7 @@ A robust full-stack web application for organizing, managing, and tracking tasks
 
 5. Start the development server:
    ```sh
-   npm run dev
+   npm start
    ```
 
 ---
@@ -217,26 +217,48 @@ A robust full-stack web application for organizing, managing, and tracking tasks
 
 ```
 project-root/
-├── client/                # Frontend (React + Vite)
-│   ├── src/
-│   │   ├── components/    # Reusable React components
-│   │   ├── context/       # Context providers (state management)
-│   │   ├── pages/         # Page-level React components
-│   │   ├── services/      # API service modules
-│   │   └── utils/         # Utility/helper functions
-│   ├── public/            # Static assets
-│   ├── package.json       # Frontend dependencies & scripts
-│   └── vite.config.js     # Vite configuration
+├── client/                        # Frontend (React + Vite)
+│   ├── src/                       # Source code
+│   │   ├── components/            # Reusable React components
+│   │   ├── context/               # Context providers (state management)
+│   │   ├── pages/                 # Page-level React components
+│   │   ├── services/              # API service modules
+│   │   ├── utils/                 # Utility/helper functions
+│   │   └── hooks/                 # Custom React hooks
+│   ├── public/                    # Static assets (favicon, logo, etc.)
+│   ├── index.html                 # Main HTML file
+│   ├── package.json               # Frontend dependencies & scripts
+│   ├── vite.config.js             # Vite configuration
+│   ├── tailwind.config.js         # TailwindCSS configuration
+│   ├── postcss.config.js          # PostCSS configuration
+│   ├── babel.config.cjs           # Babel configuration
+│   ├── eslint.config.js           # ESLint configuration
+│   ├── jest.config.cjs            # Jest configuration (frontend tests)
+│   ├── Dockerfile                 # Dockerfile for frontend
+│   ├── nginx.conf                 # Nginx config for production
+│   └── README.md                  # Frontend README
 │
-└── server/                # Backend (Node.js + Express)
-    ├── controllers/       # Route controller logic
-    ├── middleware/        # Express middleware (auth, error handling, etc.)
-    ├── models/            # Mongoose models (MongoDB schemas)
-    ├── routes/            # API route definitions
-    ├── utils/             # Utility/helper functions
-    ├── app.js             # Express app setup
-    ├── server.js          # Server entry point
-    └── package.json       # Backend dependencies & scripts
+├── server/                        # Backend (Node.js + Express)
+│   ├── controllers/               # Route controller logic
+│   ├── middleware/                # Express middleware (auth, error handling, etc.)
+│   ├── models/                    # Mongoose models (MongoDB schemas)
+│   ├── routes/                    # API route definitions
+│   ├── utils/                     # Utility/helper functions
+│   ├── __tests__/                 # Backend unit/integration tests
+│   ├── app.js                     # Express app setup
+│   ├── server.js                  # Server entry point
+│   ├── package.json               # Backend dependencies & scripts
+│   ├── Dockerfile                 # Dockerfile for backend
+│   ├── jest.config.js             # Jest configuration (backend tests)
+│   ├── jest.setup.js              # Jest setup file
+│   ├── .env                       # Environment variables (example)
+│   └── vercel.json                # Vercel deployment config
+│
+├── .env                           # Root environment variables
+├── .gitignore                     # Git ignore rules
+├── docker-compose.yml             # Docker Compose configuration
+├── LICENSE                        # Project license (MIT)
+├── README.md                      # Main project documentation
 ```
 
 ---
