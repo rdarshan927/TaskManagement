@@ -13,8 +13,6 @@ if (!cached) {
 }
 
 async function dbConnect() {
-  console.log("ENV MONGO_URI:", process.env.MONGO_URI);
-
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {

@@ -12,7 +12,7 @@ const TaskForm = ({ onComplete }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { addTask } = useContext(TaskContext);
+  const { createTask } = useContext(TaskContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,9 +23,10 @@ const TaskForm = ({ onComplete }) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
+    
     try {
-      await addTask(formData);
+      await createTask(formData);
+      
       setFormData({
         title: '',
         description: '',
@@ -33,9 +34,17 @@ const TaskForm = ({ onComplete }) => {
         priority: 'medium',
         dueDate: ''
       });
+      
       if (onComplete) onComplete();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create task');
+      if (err.response) {
+        // The server responded with an error
+        setError(`Error: ${err.response.data.message || 'Failed to create task'}`);
+      } else if (err.request) {
+        setError('Network error. Server not responding.');
+      } else {
+        setError(`Error: ${err.message || 'Unknown error'}`);
+      }
     } finally {
       setLoading(false);
     }
