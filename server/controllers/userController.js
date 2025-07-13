@@ -105,6 +105,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
+    await dbConnect();
     const { email, password } = req.body;
 
     // Check for user email
