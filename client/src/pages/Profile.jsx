@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/authUtils';
 import TwoFactorSetup from '../components/TwoFactorSetup';
+import TwoFactorDisableModal from '../components/TwoFactorDisableModal';
 import api from '../services/api';
 import { buttonVariants } from '../utils/theme';
 
 const Profile = () => {
   const { user } = useAuth();
   const [showTwoFactorSetup, setShowTwoFactorSetup] = useState(false);
+  const [showDisableModal, setShowDisableModal] = useState(false);
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -37,31 +39,33 @@ const Profile = () => {
     fetchUserProfile();
   }, []);
 
+  const handleDisableTwoFactorClick = () => {
+    setShowDisableModal(true);
+  };
+
   const disableTwoFactor = async () => {
-    if (window.confirm('Are you sure you want to disable two-factor authentication? This will make your account less secure.')) {
-      try {
-        setLoading(true);
-        const response = await api.post('/users/2fa/disable');
-        if (response.data.success) {
-          setProfileData({
-            ...profileData,
-            twoFactorEnabled: false
-          });
-          setShowTwoFactorSetup(false);
-        }
-      } catch (err) {
-        setError('Failed to disable 2FA');
-        console.error(err);
-      } finally {
-        setLoading(false);
+    try {
+      setLoading(true);
+      const response = await api.post('/users/2fa/disable');
+      if (response.data.success) {
+        setProfileData({
+          ...profileData,
+          twoFactorEnabled: false
+        });
+        setShowTwoFactorSetup(false);
       }
+    } catch (err) {
+      setError('Failed to disable 2FA');
+      console.error(err);
+    } finally {
+      setLoading(false);
+      setShowDisableModal(false); // Close modal when done
     }
   };
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-
         {loading ? (
           <div className="p-6 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-DEFAULT mx-auto"></div>
@@ -106,7 +110,7 @@ const Profile = () => {
                       )}
                     </span>
                     <button
-                      onClick={profileData.twoFactorEnabled ? disableTwoFactor : () => setShowTwoFactorSetup(!showTwoFactorSetup)}
+                      onClick={profileData.twoFactorEnabled ? handleDisableTwoFactorClick : () => setShowTwoFactorSetup(!showTwoFactorSetup)}
                       className={`px-3 py-1 rounded text-white ${
                         profileData.twoFactorEnabled ? buttonVariants.danger : buttonVariants.primary
                       }`}
@@ -137,6 +141,13 @@ const Profile = () => {
           </div>
         )}
       </div>
+
+      {/* 2FA Disable Confirmation Modal */}
+      <TwoFactorDisableModal
+        isOpen={showDisableModal}
+        onClose={() => setShowDisableModal(false)}
+        onConfirm={disableTwoFactor}
+      />
     </div>
   );
 };
