@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const dbConnect = require('../utils/dbConnect');
 
 const protect = async (req, res, next) => {
   try {
+    await dbConnect();
     let token;
     
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {

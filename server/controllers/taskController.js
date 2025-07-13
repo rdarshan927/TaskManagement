@@ -1,7 +1,9 @@
 const Task = require('../models/taskModel');
+const dbConnect = require('../utils/dbConnect');
 
 const getTasks = async (req, res) => {
   try {
+    await dbConnect();
     const tasks = await Task.find({ user: req.user.id });
     res.status(200).json(tasks);
   } catch (error) {
@@ -11,6 +13,7 @@ const getTasks = async (req, res) => {
 
 const createTask = async (req, res) => {
   try {
+    await dbConnect();
     const { title, description, status, priority, dueDate } = req.body;
 
     if (!title) {
@@ -35,6 +38,7 @@ const createTask = async (req, res) => {
 
 const updateTask = async (req, res) => {
   try {
+    await dbConnect();
     const task = await Task.findById(req.params.id);
 
     if (!task) {
@@ -60,6 +64,7 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
+    await dbConnect();
     const task = await Task.findById(req.params.id);
 
     if (!task) {

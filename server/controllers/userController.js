@@ -14,6 +14,7 @@ const generateToken = (id) => {
 // Generate secret for user
 const generateSecret = async (req, res) => {
   try {
+    await dbConnect();
     const secret = speakeasy.generateSecret({
       name: `Task Manager App:${req.user.email}`,
       digits: 6,
@@ -43,6 +44,7 @@ const generateBackupCodes = () => {
 
 // Verify and enable 2FA
 const enableTwoFactor = async (req, res) => {
+  await dbConnect();
   const { token } = req.body;
   const verified = speakeasy.totp.verify({
     secret: req.user.twoFactorSecret,
@@ -66,6 +68,7 @@ const enableTwoFactor = async (req, res) => {
 
 const registerUser = async (req, res) => {
   try {
+    await dbConnect();
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
@@ -137,6 +140,7 @@ const loginUser = async (req, res) => {
 
 const getMe = async (req, res) => {
   try {
+    await dbConnect();
     console.log('User from req:', req.user);
     
     res.status(200).json(req.user);
@@ -148,6 +152,7 @@ const getMe = async (req, res) => {
 
 const verifyTwoFactor = async (req, res) => {
   try {
+    await dbConnect();
     const { userId, token } = req.body;
     const isBackupCode = req.body.isBackupCode === true || req.body.isBackupCode === "true";
     const user = await User.findById(userId);
@@ -238,6 +243,7 @@ const verifyTwoFactor = async (req, res) => {
 
 const disableTwoFactor = async (req, res) => {
   try {    
+    await dbConnect();
     // Disable 2FA
     req.user.twoFactorEnabled = false;
     req.user.twoFactorSecret = undefined;
